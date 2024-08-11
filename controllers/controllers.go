@@ -97,8 +97,9 @@ func EditaAluno(c *gin.Context) {
 	}
 
 	//pegando o modelo de banco de dados do aluno e atualizando as infos do aluno
-	database.DB.Model(&aluno).UpdateColumns(aluno) //pega o modelo de aluno e atualizando todas as colunas com base no aluno que passamos no corpo da requisição
+	//database.DB.Model(&aluno).UpdateColumns(aluno) //pega o modelo de aluno e atualizando todas as colunas com base no aluno que passamos no corpo da requisição
 
+	database.DB.Save(&aluno) //atualiza todas as colunas do aluno
 	c.JSON(http.StatusOK, aluno)
 }
 
@@ -117,4 +118,21 @@ func BuscaAlunoPorCPF(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, aluno)
+}
+
+func ExibePaginaIndex(c *gin.Context) {
+	///exibir os alunos do banco de dados
+	//criando uma lista de alunos
+	var alunos []models.Aluno
+	//encontra todos os alunos e coloca dentro da variavel alunos
+	database.DB.Find(&alunos)
+	//segunda informacao, qual o nome do template que queremos renderizar
+	c.HTML(http.StatusOK, "index.html", gin.H{
+		"alunos": alunos,
+	})
+}
+
+// funcao para rota nao encontrada
+func RotaNaoEncontrada(c *gin.Context) {
+	c.HTML(http.StatusNotFound, "404.html", nil)
 }
